@@ -18,8 +18,8 @@ void *bnsearch(const void *key, const void *base, size_t nmemb,
 	void *start = (char *)base;
 	while (k >= i) {
 		j = (i + k) / 2;
-		if ((cmpr = cmp(key, start+size*j)) == 0)
-			return start+size*j;
+		if ((cmpr = cmp(key, start + size * j)) == 0)
+			return start + size * j;
 		else if (cmpr > 0)
 			i = j + 1;
 		else

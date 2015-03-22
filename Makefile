@@ -12,18 +12,24 @@ BINS = $(patsubst src/%.c,bin/%.o,$(BIN_SRC))
 TEST_SRC = $(wildcard tests/*_test.c)
 TESTS = $(patsubst tests/%.c,tests/%,$(TEST_SRC))
 
-all: $(BINS) tests
+all: $(BINS) archive tests
 
 $(BDIR)/%.o: %.c
 	$(COMPILE.c) $(OUTPUT_OPTION) $<
 
-tests: $(BINS) $(TESTS)
+archive: $(BINS)
+	ar rs libzalgo.a $(BINS)
+
+tests: archive $(TESTS)
 
 # obj dep wont exit until after first expansion phase
 # get correct obj and src deps., and only use obj dep for compiling
+# old method of linking:
+# tests/%_test:  $$(BDIR)/$$*.o,$$(BINS)) %_test.c
+# $(LINK.c) $@.c $(filter %.o,$^) $(LOADLIBES) $(LDLIBS) -o $@
 .SECONDEXPANSION:
-tests/%_test: $$(filter $$(BDIR)/$$*.o,$$(BINS)) %_test.c
-	$(LINK.c) $@.c $(filter %.o,$^) $(LOADLIBES) $(LDLIBS) -o $@
+tests/%_test: archive %_test.c
+	$(LINK.c) $@.c libzalgo.a $(LOADLIBES) $(LDLIBS) -o $@
 
 .PHONY: clean
 clean:
