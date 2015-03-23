@@ -35,7 +35,8 @@ int main()
 	/* perform binary search */
 	vpos = bnsearch(&key, incrnums, arraysize, sizeof(int), intcmp);
 	if (vpos == NULL) {
-		fprintf(stderr, "bnsearch() error: function returned NULL");
+		fprintf(stderr, "bnsearch() error: function returned "
+				"NULL\n");
 		rval = -1;
 		goto exit;
 	} else {

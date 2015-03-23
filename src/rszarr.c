@@ -36,8 +36,8 @@ void rszarr_push(rszarr_t *ra, void *d)
 		return;
 	if (ra->size >= ra->cap)
 		rszarr_resize(ra, ra->cap * 2);
-	void *pos = *((char **)ra->data + ra->size);
-	pos = d;
+	void **pos = (void **)((char **)ra->data + ra->size);
+	*pos = d;
 	ra->size++;
 }
 
@@ -45,9 +45,7 @@ void *rszarr_pop(rszarr_t *ra)
 {
 	if (!ra->size)
 		return NULL;
-	/* this line looks silly but im casting to char * for
-	 * pointer arithmetic */
-	void *rval = (void *)((char *)ra->data + ra->size - 1);
+	void *rval = *((char **)ra->data + ra->size - 1);
 	ra->size--;
 	if (ra->size <= ra->cap / 4)
 		rszarr_resize(ra, ra->cap / 2);
@@ -58,12 +56,14 @@ void rszarr_swap(rszarr_t *ra, size_t i, size_t j)
 {
 	if (!ra)
 		return;
-	void *iptr = *((char **)ra->data + i);
-	void *jptr = *((char **)ra->data + j);
+	if (i >= ra->size || j >= ra->size)
+		return;
+	void **iptr = (void **)((char **)ra->data + i);
+	void **jptr = (void **)((char **)ra->data + j);
 	/* swap */
-	void *tmp = iptr;
-	iptr = jptr;
-	jptr = tmp;
+	void *tmp = *iptr;
+	*iptr = *jptr;
+	*jptr = tmp;
 }
 
 /* static f(x)'s */
@@ -76,8 +76,12 @@ static int rszarr_resize(rszarr_t *ra, size_t cap)
 		rval = -1;
 		goto error;
 	}
+	if (cap <= RSZARR_MIN_SIZ) {
+		rval = -1;
+		goto error;
+	}
 	void **tmp;
-	tmp = realloc(ra->data, cap);
+	tmp = realloc(ra->data, cap * sizeof(void *));
 	if (tmp) {
 		rval = 0;
 		goto exit;
@@ -88,8 +92,9 @@ static int rszarr_resize(rszarr_t *ra, size_t cap)
 		goto error;
 	}
 	memcpy(tmp, ra->data, cap); 
-exit:
 	free(ra->data);
+	rval = 0;
+exit:
 	ra->data = tmp;
 	ra->cap = cap;
 error:

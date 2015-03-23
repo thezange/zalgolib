@@ -35,7 +35,8 @@ int main()
 	/* perform linear search */
 	vpos = lnsearch(&key, incrnums, arraysize, sizeof(int), intcmp);
 	if (vpos == NULL) {
-		fprintf(stderr, "lnsearch() error: function returned NULL");
+		fprintf(stderr, "lnsearch() error: function returned "
+				"NULL\n");
 		rval = -1;
 		goto exit;
 	} else {
