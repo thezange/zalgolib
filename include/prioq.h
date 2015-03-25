@@ -1,16 +1,19 @@
 #ifndef PRIOQ__H
 #define PRIOQ__H
-#include <stdlib.h>
+#include "rszarr.h"
+
+typedef int (*cmp_t)(void *, void *);
 
 typedef struct {
-	void **heap;
-	size_t size;
-	size_t capacity;
-	/* cmp f(x) */
+	rszarr_t heap;
+	size_t hsiz;
+	cmp_t cmp;
 } prioq_t;
 
-prioq_t *prioq_alloc(/* cmp */);
+prioq_t *prioq_alloc(cmp_t cmp);
 void prioq_free(prioq_t *pq);
 void prioq_insert(prioq_t *pq, void *v);
+void *prioq_extract(prioq_t *pq);
+void *prioq_peek(prioq_t *pq);
 
 #endif

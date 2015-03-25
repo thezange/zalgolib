@@ -30,25 +30,32 @@ void rszarr_free(rszarr_t *ra)
 	free(ra);
 }
 
-void rszarr_push(rszarr_t *ra, void *d)
+int rszarr_push(rszarr_t *ra, void *d)
 {
-	if (!ra)
-		return;
+	int rval;
+	if (!ra) {
+		rval = -1;
+	}
 	if (ra->size >= ra->cap)
 		rszarr_resize(ra, ra->cap * 2);
 	void **pos = (void **)((char **)ra->data + ra->size);
 	*pos = d;
 	ra->size++;
+	rval = 0;
+exit:
+	return rval;
 }
 
 void *rszarr_pop(rszarr_t *ra)
 {
+	void *rval = NULL;
 	if (!ra->size)
-		return NULL;
-	void *rval = *((char **)ra->data + ra->size - 1);
+		goto exit;
+	rval = *((char **)ra->data + ra->size - 1);
 	ra->size--;
 	if (ra->size <= ra->cap / 4)
 		rszarr_resize(ra, ra->cap / 2);
+exit:
 	return rval;
 }
 

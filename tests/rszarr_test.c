@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
 		cur->data = i * 10;
 		rszarr_push(ra, cur);
 	}
+	printf("rszarr_push() success\n");
 	/* testing pop() */
 	while (ra->size > 0) {
 		cur = rszarr_pop(ra);
