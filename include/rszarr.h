@@ -18,3 +18,4 @@ void rszarr_swap(rszarr_t *ra, size_t i, size_t j);
 /* resize public or private? */
 
 #endif
+

@@ -17,3 +17,4 @@ void *prioq_extract(prioq_t *pq);
 void *prioq_peek(prioq_t *pq);
 
 #endif
+

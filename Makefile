@@ -3,8 +3,12 @@ vpath %.h include
 vpath %.o bin
 
 CPPFLAGS += -Iinclude
+IDIR = include
 BDIR = bin
 TESTDIR = tests
+
+HDR_ORDERED = lnsearch.h bnsearch.h lnode.h llist.h rszarr.h prioq.h
+HDRS = $(patsubst %, $(IDIR)/%, $(HDR_ORDERED))
 
 BIN_SRC = $(wildcard src/*.c)
 BINS = $(patsubst src/%.c,bin/%.o,$(BIN_SRC))
@@ -31,7 +35,12 @@ tests: $(BDIR)/libzalgo.a $(TESTS)
 tests/%_test: $(BDIR)/libzalgo.a %_test.c
 	$(LINK.c) $@.c $< $(LOADLIBES) $(LDLIBS) -o $@
 
+header: $(HDRS)
+	cat $(HDRS) > zalgolib.h
+	./prepheader.py
+
 .PHONY: clean
 clean:
 	rm -f $(BDIR)/*.o
 	rm -f $(TESTDIR)/*_test
+
